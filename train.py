@@ -9,6 +9,7 @@ import numpy as np
 from sklearn.model_selection import train_test_split
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 from tensorflow.keras.optimizers import SGD
+from tensorflow.keras.optimizers import Nadam
 from tensorflow.keras.preprocessing.image import img_to_array
 from sklearn.metrics import classification_report
 from sklearn.preprocessing import LabelBinarizer
@@ -28,9 +29,9 @@ ap.add_argument("-p", "--plot", required=True,
                 help="path to output accuracy/loss plot")
 args = vars(ap.parse_args())
 
-INIT_LR = 0.001
-EPOCHS = 75
-BS = 1
+INIT_LR = 0.0003
+EPOCHS = 250
+BS = 32
 
 print("[INFO] read image...")
 
@@ -40,35 +41,34 @@ data = []
 labels = []
 
 for imagePath in imagePaths:
-    label = get_class.get_class(imagePath)
-    if label == "null":
-        continue
+    label = imagePath.split("/")[-2]
+    # if label == "null":
+    #     continue
     # print(label)
     image = cv2.imread(imagePath)
-    image = cv2.resize(image, (224, 224))
+    image = cv2.resize(image, (96, 96))
     image = img_to_array(image)
-    # image = image / 255.0
-    # image = np.expand_dims(image, 0)
 
     data.append(image)
     labels.append(label)
 
-data = np.array(data, dtype="float32")
+data = np.array(data, dtype="float") / 255.0
 labels = np.array(labels)
 
 lb = LabelBinarizer()
 labels = lb.fit_transform(labels)
 
 (trainX, testX, trainY, testY) = \
-    train_test_split(data, labels, test_size=0.2, random_state=42)
+    train_test_split(data, labels, test_size=0.15, random_state=42)
 
 aug = ImageDataGenerator(rotation_range=30, width_shift_range=0.1,
                          height_shift_range=0.1, shear_range=0.2, zoom_range=0.2,
                          horizontal_flip=True, fill_mode="nearest")
 
 print("[INFO] compiling model...")
-model = VGG16.build(width=64, height=64, depth=3, classes=len(lb.classes_))
-opt = SGD(lr=INIT_LR, decay=INIT_LR / EPOCHS)
+model = SmallVGGNet.build(width=96, height=96, depth=3, classes=len(lb.classes_))
+# opt = SGD(lr=INIT_LR, decay=INIT_LR / EPOCHS)
+opt = Nadam(lr=0.0003, beta_1=0.9, beta_2=0.999, epsilon=1e-08, schedule_decay=0.004)
 model.compile(loss="categorical_crossentropy", optimizer=opt,
               metrics=["accuracy"])
 

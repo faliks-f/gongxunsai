@@ -1,10 +1,14 @@
 def get_label(index):
     if index == "2":
         return "cigarette"
-    if index == "6" or index == "7" or index == "11" or index == "12" or index == "13":
+    if index == "6":
+        return "rice"
+    if index == "11":
         return "vegetable"
-    if index == "8" or index == "9":
-        return "fruits"
+    if index == "8":
+        return "peel"
+    if index == "9":
+        return "pulp"
     if index == "23":
         return "can"
     if index == "36":
