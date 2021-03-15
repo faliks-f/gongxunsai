@@ -1,6 +1,6 @@
 import matplotlib
-
 matplotlib.use("Agg")
+import tensorflow as tf
 import argparse
 import cv2
 import pickle
@@ -17,6 +17,10 @@ from VGGNet.vggnet import SmallVGGNet
 from VGGNet.vggnet import VGG16
 from utils import get_class
 from imutils import paths
+
+config = tf.compat.v1.ConfigProto()
+config.gpu_options.per_process_gpu_memory_fraction = 0.3
+sess = tf.compat.v1.Session(config=config)
 
 ap = argparse.ArgumentParser()
 ap.add_argument("-d", "--dataset", required=True,
@@ -41,7 +45,7 @@ data = []
 labels = []
 
 for imagePath in imagePaths:
-    label = imagePath.split("/")[-2]
+    label = imagePath.split("\\")[-2]
     # if label == "null":
     #     continue
     # print(label)
