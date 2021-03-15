@@ -7,39 +7,31 @@ import pickle
 import cv2
 import _thread
 from imutils import paths
-from utils.pipe_communicate import *
 
+os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
+os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
 
-model = load_model("/home/pi/gongxunsai/gongxunsai/outputs/eighth/modle.modle")
-lb = pickle.loads(open("/home/faliks/gongxunsai/gongxunsai/outputs/eighth/lable.pickle", "rb").read())
+model = load_model("./outputs/eighth/model.model")
+lb = pickle.loads(open("./outputs/eighth/label.pickle", "rb").read())
+print(lb.classes_)
 
-empty_image = cv2.imread("/home/pi/gongxunsai/gongxunsai/0.jpg")
-empty_image = cv2.resize(empty_image, (1, 1))
+capture = cv2.VideoCapture(1)
 
-capture = cv2.VideoCapture(0)
-
-if not capture.isOpened():
-    write('z')
-    exit(1)
-
-write('r')
-
-predictFlag = False
+predictFlag = True
 image_ = None
 previousLabel = None
 countLabel = 0
-emptyCount = 0
-emptyFlag = True
 
-def handleMessage(s):
-    global predictFlag
-    if s == 'p'.encode():
-        predictFlag = True
-        return
-    if s == 's'.encode():
-        predictFlag = False
-        return
 
+# def handleMessage(s):
+#     global predictFlag
+#     if s == 'p'.encode():
+#         predictFlag = True
+#         return
+#     if s == 's'.encode():
+#         predictFlag = False
+#         return
+#
 
 def read_image(threadName):
     global image_
@@ -47,28 +39,12 @@ def read_image(threadName):
         ret, image_ = capture.read()
 
 
-def send(label):
-    if label == "battery":
-        write('a')
-        return
-    if label == "bottle":
-        write('b')
-        return
-    if label == "can":
-        write('c')
-        return
-    if label == 'fruits':
-        write('f')
-        return
-    if label == 'vegetable':
-        write('v')
-        return
-
-
 try:
-    _thread.start_new_thread(read_image, ("1", ))
+    _thread.start_new_thread(read_image, ("1",))
 except Exception as e:
     print("error")
+
+empty_image = cv2.imread("./data/empty/0.jpg")
 
 while True:
     if image_ is None:
@@ -76,15 +52,14 @@ while True:
     else:
         image = image_.copy()
     if image is None:
-        print("none empty")
         cv2.imshow("empty", empty_image)
         q = cv2.waitKey(1000)
+        print("none")
         if q == ord('q'):
-            break
-        if not os.path.exists(READFILE) or not os.path.exists(WRITEFILE):
             break
         continue
     output = image.copy()
+    # print(predictFlag)
     if predictFlag:
         image = cv2.resize(image, (96, 96))
         image = image.astype("float") / 255.0
@@ -92,37 +67,20 @@ while True:
         preds = model.predict(image)
         i = preds.argmax(axis=1)[0]
         predLabel = lb.classes_[i]
-        if emptyFlag:
-            if predLabel == "empty":
-                emptyCount = 0
-            else:
-                emptyCount += 1
-            if emptyCount >= 5:
-                emptyFlag = False
-                emptyCount = 0
-                cv2.imshow("empty", empty_image)
-                cv2.waitKey(5000)
-                continue
+        print(predLabel)
+        if predLabel == previousLabel:
+            countLabel += 1
         else:
-            if predLabel == previousLabel:
-                countLabel += 1
-            else:
-                previousLabel = predLabel
-                countLabel = 0
-            if countLabel >= 10:
-                send(predLabel)
-                countLabel = 0
-                predictFlag = False
-                emptyFlag = True
+            previousLabel = predLabel
+            countLabel = 0
+        if countLabel >= 10:
+            # print(predLabel)
+            countLabel = 0
+            # predictFlag = False
     cv2.imshow("image", output)
-    q = cv2.waitKey(100)
+    q = cv2.waitKey(0)
     if q == ord('q'):
         break
-    if not os.path.exists(READFILE) or not os.path.exists(WRITEFILE):
-        break
-    handleMessage(read())
-
-close()
 # else:
 #     imagePaths = sorted(list(paths.list_images(args["image"])))
 #     result = {}
