@@ -9,13 +9,13 @@ import _thread
 from imutils import paths
 from utils.pipe_communicate import *
 
-model = load_model("/home/pi/gongxunsai/gongxunsai/outputs/eleven/model.model")
-lb = pickle.loads(open("/home/pi/gongxunsai/gongxunsai/outputs/eleven/label.pickle", "rb").read())
+model = load_model("./outputs/eleven/model.model")
+lb = pickle.loads(open("./outputs/eleven/label.pickle", "rb").read())
 
-empty_image = cv2.imread("/home/pi/gongxunsai/gongxunsai/0.jpg")
-empty_image = cv2.resize(empty_image, (1, 1))
+empty_image = cv2.imread("./0.jpg")
+# empty_image = cv2.resize(empty_image, (1, 1))
 
-capture = cv2.VideoCapture(0)
+capture = cv2.VideoCapture(1)
 
 if not capture.isOpened():
     write('z')
@@ -78,6 +78,7 @@ while True:
         image = None
     else:
         image = image_.copy()
+    # image = empty_image
     if image is None:
         print("none empty")
         cv2.imshow("empty", empty_image)
