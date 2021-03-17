@@ -9,9 +9,8 @@ import _thread
 from imutils import paths
 from utils.pipe_communicate import *
 
-
-model = load_model("/home/pi/gongxunsai/gongxunsai/outputs/eleven/modle.modle")
-lb = pickle.loads(open("/home/faliks/gongxunsai/gongxunsai/outputs/eleven/lable.pickle", "rb").read())
+model = load_model("/home/pi/gongxunsai/gongxunsai/outputs/eleven/model.model")
+lb = pickle.loads(open("/home/pi/gongxunsai/gongxunsai/outputs/eleven/label.pickle", "rb").read())
 
 empty_image = cv2.imread("/home/pi/gongxunsai/gongxunsai/0.jpg")
 empty_image = cv2.resize(empty_image, (1, 1))
@@ -22,8 +21,6 @@ if not capture.isOpened():
     write('z')
     exit(1)
 
-
-
 write('r')
 
 predictFlag = False
@@ -32,6 +29,7 @@ previousLabel = None
 countLabel = 0
 emptyCount = 0
 emptyFlag = True
+
 
 def handleMessage(s):
     global predictFlag
@@ -71,7 +69,7 @@ def send(label):
 
 
 try:
-    _thread.start_new_thread(read_image, ("1", ))
+    _thread.start_new_thread(read_image, ("1",))
 except Exception as e:
     print("error")
 
