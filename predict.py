@@ -95,8 +95,10 @@ while True:
         preds = model.predict(image)
         i = preds.argmax(axis=1)[0]
         predLabel = lb.classes_[i]
+        print(predLabel)
         if emptyFlag:
             if predLabel == "empty":
+                write('e')
                 emptyCount = 0
             else:
                 emptyCount += 1
