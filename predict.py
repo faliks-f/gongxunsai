@@ -10,8 +10,8 @@ from imutils import paths
 from utils.pipe_communicate import *
 
 
-model = load_model("/home/pi/gongxunsai/gongxunsai/outputs/eighth/modle.modle")
-lb = pickle.loads(open("/home/faliks/gongxunsai/gongxunsai/outputs/eighth/lable.pickle", "rb").read())
+model = load_model("/home/pi/gongxunsai/gongxunsai/outputs/eleven/modle.modle")
+lb = pickle.loads(open("/home/faliks/gongxunsai/gongxunsai/outputs/eleven/lable.pickle", "rb").read())
 
 empty_image = cv2.imread("/home/pi/gongxunsai/gongxunsai/0.jpg")
 empty_image = cv2.resize(empty_image, (1, 1))
@@ -48,20 +48,23 @@ def read_image(threadName):
 
 
 def send(label):
-    if label == "battery":
+    if label == "apple":
         write('a')
         return
-    if label == "bottle":
+    if label == "banana":
         write('b')
         return
     if label == "can":
         write('c')
         return
-    if label == 'fruits':
+    if label == "battery":
+        write('d')
+        return
+    if label == 'cigarette':
         write('f')
         return
-    if label == 'vegetable':
-        write('v')
+    if label == 'orange':
+        write('o')
         return
 
 
@@ -101,7 +104,7 @@ while True:
                 emptyFlag = False
                 emptyCount = 0
                 cv2.imshow("empty", empty_image)
-                cv2.waitKey(5000)
+                cv2.waitKey(2000)
                 continue
         else:
             if predLabel == previousLabel:
