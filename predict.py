@@ -116,6 +116,7 @@ while True:
                 countLabel = 0
             if countLabel >= 10:
                 send(predLabel)
+                print("send", predLabel)
                 countLabel = 0
                 predictFlag = False
                 emptyFlag = True
