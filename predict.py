@@ -12,7 +12,7 @@ from utils.pipe_communicate import *
 model = load_model("/home/pi/gongxunsai/gongxunsai/outputs/eleven/model.model")
 lb = pickle.loads(open("/home/pi/gongxunsai/gongxunsai/outputs/eleven/label.pickle", "rb").read())
 
-empty_image = cv2.imread("./0.jpg")
+empty_image = cv2.imread("/home/pi/gongxunsai/gongxunsai/0.jpg")
 # empty_image = cv2.resize(empty_image, (1, 1))
 
 capture = cv2.VideoCapture(1)
