@@ -22,6 +22,8 @@ if not capture.isOpened():
     write('z')
     exit(1)
 
+
+
 write('r')
 
 predictFlag = False
