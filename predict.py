@@ -107,7 +107,7 @@ while True:
                 emptyFlag = False
                 emptyCount = 0
                 cv2.imshow("empty", empty_image)
-                cv2.waitKey(2000)
+                cv2.waitKey(500)
                 continue
         else:
             if predLabel == previousLabel:
@@ -119,7 +119,7 @@ while True:
                 send(predLabel)
                 print("send", predLabel)
                 countLabel = 0
-                predictFlag = False
+                # predictFlag = False
                 emptyFlag = True
     cv2.imshow("image", output)
     q = cv2.waitKey(100)
