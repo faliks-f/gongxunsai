@@ -119,7 +119,7 @@ while True:
                 send(predLabel)
                 print("send", predLabel)
                 countLabel = 0
-                predictFlag = False
+                # predictFlag = False
                 emptyFlag = True
     cv2.imshow("image", output)
     q = cv2.waitKey(100)
